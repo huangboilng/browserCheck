@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <title>浏览器检测</title>
+
+
+<script>
+
+//http://se.360.cn/v5/laboratory6.htm-------检测是否ie浏览器内核，页面右下角有个点此测试
+//http://keenwon.com/demo/201402/js-check-browser.html    检测浏览器内核
+
+//排除localhost本地主机的浏览器不检测
+if(location.hostname != "localhost") {	
+	//alert(location.hostname);	
+		
+	//360版本举例	  http://www.pc6.com/z/360llq/
+	var smallversion360 = "3.0.8.1003"; 
+
+	//firefix版本举例  http://ftp.mozilla.org/pub/firefox/releases/		
+	var smallversionfirefix = "39.0.1";  
+
+	//chrome版本举例  http://www.portablesoft.org/google-chrome-legacy-versions/	
+	var smallversionchrome = "48.0.2526";  
+
+	//ie版本举例 
+	var smallversionie = "8.0";  
+	
+	//浏览器版本号比较大小 
+	var contrast=function(currVer,promoteVer){
+		currVer = currVer?currVer.replace(/[vV]/,""):"0.0.0"; 
+		promoteVer = promoteVer?promoteVer.replace(/[vV]/,""):"0.0.0";
+		if(currVer==promoteVer) return false;
+		var currVerArr = currVer.split(".");
+		var promoteVerArr = promoteVer.split(".");
+		var len = Math.max(currVerArr.length,promoteVerArr.length);
+		var smalllen = Math.min(currVerArr.length,promoteVerArr.length); 
+
+		//防止版本号长度不一样，当版本号长度不一样时，添加短的数组长度push为0
+		if(len != smalllen && len > smalllen){
+			var lencha = len - smalllen; 
+			if(currVerArr.length < promoteVerArr.length){
+				for(var i=0;i<=lencha;i++){
+					currVerArr.push(0);
+				}	
+			}
+			if(currVerArr.length > promoteVerArr.length){
+				for(var i=0;i<=lencha;i++){
+					promoteVerArr.push(0);
+				}	
+			}
+		}
+
+		for(var i=0;i<len;i++){
+			var proVal = promoteVerArr[i], 
+				curVal = currVerArr[i];
+				
+				//alert(curVal);alert(proVal);
+				
+			if(parseInt(proVal)<parseInt(curVal)){
+				//return "当前版本大于假设版本"
+				return false;
+			}else if(parseInt(proVal)>parseInt(curVal)){
+				//return "当前版本小于假设版本";
+				return true;
+			}
+		}
+		return 3;
+	};
+
+	//alert(contrast(version1,version2));	
+		
+	//获取浏览器并且比较浏览器版本大小，跳转到对应的page---------------------------------------------------
+		
+	var Sys = {};
+	var ua = navigator.userAgent.toLowerCase();
+	var s;
+
+	(s = ua.match(/rv:([\d.]+)\) like gecko/)) ? Sys.ie = s[1] :
+	(s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+	(s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+	(s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] : 
+	(s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+    (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+
+	/*if(Sys.ie || Sys.opera || Sys.safari){alert(Sys.ie);
+		alert("您的浏览器版本不符合！请下载！");
+	}*/
+
+	//if(!Sys.firefox && !Sys.chrome){
+
+	
+	
+	if(Sys.opera || Sys.safari){
+		//opera,safari 内核
+		alert("您的浏览器版本不符合！请下载！");
+	}else if(Sys.ie){alert(Sys.ie);
+		//ie 内核
+		 var nowVersionie = s[1];
+		 var contrastval = contrast(nowVersionie,smallversionie);
+		 if(contrastval){
+			alert("您的浏览器版本不符合！请下载！");alert('ie: ' + Sys.ie);
+		 }else{
+			alert('ie: ' + Sys.ie + '可以跳转到远程会诊');
+			window.location.href="http://www.baidu.com";
+		 }	
+	}else{
+		//firefox,chrome 内核
+		var nowVersion = s[1];
+		if (Sys.firefox){
+			
+			 var contrastval = contrast(nowVersion,smallversionfirefix);
+			 
+			 if(contrastval){
+				alert("您的浏览器版本不符合！请下载！");alert('Firefox: ' + Sys.firefox);
+			 }else{
+				alert('Firefox: ' + Sys.firefox + '可以跳转到远程会诊');
+				window.location.href="http://www.baidu.com";
+			 }		 
+		}
+			 
+		if (Sys.chrome){  
+		
+			if(window.navigator.webkitPersistentStorage){  
+				var contrastval = contrast(nowVersion,smallversionchrome); //alert(contrastval);
+				isCrome = true;
+				if(contrastval){
+					alert("您的浏览器版本不符合！请下载！");alert('Chrome: ' + Sys.chrome);
+				}else{  
+					alert('Chrome: ' + Sys.chrome + '可以跳转到远程会诊');
+					window.location.href="http://www.baidu.com";
+				}	
+			}else{  
+				var contrastval = contrast(nowVersion,smallversion360);
+				is360 = true; 
+				if(contrastval){
+					alert("您的浏览器版本不符合！请下载！");alert('360: ' + Sys.chrome);
+				 }else{ 
+					alert('360: ' + Sys.chrome + '可以跳转到远程会诊');
+					window.location.href="http://www.baidu.com";
+				 }	
+			}  
+		}  
+		
+		//alert(navigator.userAgent);
+		
+		//alert(navigator.userAgent); alert(navigator.appCodeName);
+	}
+}
+</script>
+
+<style>
+body{font-family:"Microsoft YaHei"; text-align:center; width:100%; margin:0 auto; background-color:#7f7f7f;}
+.dg-main{
+	background-color: #fff;
+	border-width: 20px 15px;
+    border-color: #444;
+    border-radius: 5px;
+    width: 70%;
+    border-style: solid;
+    margin: 0 auto;
+}
+img{max-width:100%;}
+.container{
+  max-width: 840px;  
+  margin-right: auto;
+  margin-left: auto;
+  font-weight:500;
+  padding-left:15px;
+  padding-right:15px;
+}
+.dg-main-account-hander{ padding-top:6em;float: left;width: 100%;}
+.dg-main-account-hander-h5box{ text-align:left;}
+.dg-main-account-hander-h5box .msg{
+  color:#333; margin-top: 0;
+  line-height: 1.8em;
+  text-indent: 34px;
+  text-align: center;  
+  font-size: 30px;
+  font-weight: 500;
+}
+.dg-main-msg a{
+	display: inline-block;
+    width: 30%;
+    padding: .6em;
+    overflow: hidden;
+	text-decoration: none;
+    color: #666;
+    line-height: 2em;
+}
+.dangerousimg{
+	display:inline-block;margin-right:2em;float: left;
+}
+.dangeroush5{
+	margin-top: 1em;
+    font-size: 40px;
+    color: #000;
+    margin-bottom: .6em;
+}
+.uploadh5{
+    float: left;
+    width: 100%;
+    font-size: 24px;
+    color: #333;
+    text-align: left;
+    text-indent: 2em;
+    font-weight: 500;    
+	margin-top: 3em;
+    margin-bottom: .5em;
+}
+.dg-main-msg{
+	background-color: #f8f8f8;
+    padding: 2em 0;
+    float: left;
+    border-radius: 6px;
+    width: 100%; margin-bottom: 6em;
+}
+.dg-main-msg img{
+    width: 60%;
+    text-align: center;
+    vertical-align: middle;
+}
+.dg-main-msg span{display: block;}
+</style>
+  </head>
+  <body>
+
+    <div class="dg-main">
+		<div class="container">	
+			<div class="dg-main-account-hander">
+				<img src="images/dangerous.png" class="dangerousimg">
+				<div class="dg-main-account-hander-h5box">
+					<h5 class="dangeroush5">危险！</h5>
+					<span class="msg">
+						你的浏览器不安全，建议你下载以下浏览器
+					</span>
+				</div>	
+			</div>
+		
+			<div class="dg-main-msg-box">
+				<h5 class="uploadh5">点击下载</h5>
+				<div class="dg-main-msg">
+					<a href="#" target="_blank"><img src="images/chrome.png"> <span>chrome</span></a>
+					<a href="#" target="_blank"><img src="images/firefox.png"><span>firefox</span></a>
+					<a href="#" target="_blank"><img src="images/360.png"><span>360</span></a>
+				</div>
+			</div>					
+			<div style="clear:both"></div>
+		</div>
+    </div>  
+
+  </body>
+</html>
